@@ -48,11 +48,13 @@ if(numWorkers>fileSize){
   exit(1);
 }
 
-char* parameters[] = {"./worker", argv[1], argv[2], numWorkers, NULL};
-execvp(parameters[0], parameters);
+//the inputs are acceptanble, exec() the worker file
 
-//all the inputs good
-//forking everything and execute the worker file
+char* parameters[] = {"./compressR_worker_LOLs", argv[1], argv[2], NULL, NULL};
+execvp(parameters[0], parameters);
+printf("ERROR: execvp failed\n");
+
+
 return 0;
 
 }
