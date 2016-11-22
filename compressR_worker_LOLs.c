@@ -193,21 +193,18 @@ printf("Initial PID (in the worker file): %d\n", myid);
 
 int startIndex =0;
 
-while(i < numWorkers){
-  int actualChunkSize = chunkSize;
+pid_t pids[numWorkers];
 
- /* if(remainder>0){
-    actualChunkSize++;
-    remainderDistribution--;
-  }*/
+//send out the spawns of satan
+for(i=0; i<numWorkers; i++){
 
+	int actualChunkSize = chunkSize;
 
-    //append extra bytes to the first chunk
+   //append extra bytes to the first chunk
     if(remainderDistribution>0){
         actualChunkSize= actualChunkSize+remainderDistribution;
         remainderDistribution =0;
     }
-
     if(i==0){
         startIndex =0 ;
     }
@@ -229,28 +226,27 @@ while(i < numWorkers){
 
     PreProcessPayload *payload = createPreProcessPayload(fileName, startIndex, actualChunkSize, partitionNumber);
     
-    pid_t id=fork();
+	if((pids[i] =fork())<0){
+		printf("ERROR: fork() failed.\n");
+		exit(1);
+	}
+	else if(pids[i]==0){
+		printf("in the child process #%d\n", i);
+		compressFileChunk(payload);
+		exit(0);
+	}
+}//end of for loop
 
-    if( id == -1){
-      printf("fork failed \n");
-      exit(1);
-    }else if(id>0){
-      printf("worker parent process, forkedPID: %d\n", id);
-      printf("I'm a parent. I dont do shit.\n");
-     	//compressFileChunk(payload);
-      
-    }else{ //id  == 0 is the child process
-      pid_t parent = getppid();
+int status;
+pid_t pid;
 
-      printf("child process %d, forked PID is %d\n", i, id);
+//waiting for each process to end
+while(numWorkers>0){
+	pid=wait(&status);
+	printf("child wiht PID %ld exited with status 0x%x.\n", (long)pid, status);
+	numWorkers--;
+}
 
-      printf("my PID is %d. my parent PID is %d\n", getpid(), parent);
-
-      compressFileChunk(payload);
-    }
-
-    i++;
-} //end of while loop
 sleep(3);
 return 0;
 
