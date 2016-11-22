@@ -9,6 +9,7 @@ Assignment02 Threads and Processes */
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <ctype.h>
 /*read in arguments in the form of:
 compressT_LOLS(<file to compress>, <number of parts>)
 compressR_LOLS(<file to compress>, <number of parts>)
@@ -155,6 +156,8 @@ int main(int argc, char *argv[])
 {
     char* fileName = argv[1];
     int numWorkers = atoi(argv[2]);
+    char existenceCheck[100];
+    char existenceCheck0[100];
 
     pthread_t *tid = malloc(sizeof(pthread_t*) * numWorkers);
 
@@ -171,11 +174,18 @@ int main(int argc, char *argv[])
 
     if (stat(fileName, &st) == 0) {
         fileSize = st.st_size;
-        printf("this is the length: %d", fileSize);
     } else {
         printf("file opening error\n");
         return -1;
     }
+
+    sprintf(existenceCheck, "%s_LOLS.txt", fileName);
+    sprintf(existenceCheck0, "%s_LOLS0.txt",fileName);
+
+    if(access(existenceCheck0, F_OK)!= -1 || access(existenceCheck, F_OK != -1)) {
+        printf("file already compressed, try new file\n");
+        return -1;
+    } 
 
    
     int chunkSize = fileSize / numWorkers;
