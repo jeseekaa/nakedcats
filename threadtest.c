@@ -59,16 +59,30 @@ char *compressString(char *s) {
     char curr = *s;
 
     int i;
-    for (i = 0; i < strlen(s); i++) {
-        if (curr == s[i]) {
-            count++;
-        } else {
-            buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
+    for (i = 0; i <= strlen(s); i++) {
+        if(isalpha(curr) || isalpha(s[i])){
+            if (curr == s[i]) {
+                count++;
+            } else if (isspace(curr) ||isspace(s[i])){
+                curr=s[i];
+                continue;
+            }
+            else {
+                buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
 
-            count = 1;
-            curr = s[i];
+                count = 1;
+                curr = s[i];
+            }
         }
-    }
+        
+       else {
+            if(isdigit(s[i])){
+                printf("Warning: non-alphabetical detected: %c\n", s[i]);
+            }
+            curr=s[i]; 
+        }
+
+    } //end of for loop, parsing input string
     buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
 
     // null terminate buffer
@@ -178,13 +192,16 @@ int main(int argc, char *argv[])
             actualChunkSize++;
             remainderDistribution--;
         }*/
-
+        
+        /*i'm just appending the extra bytes to the first file
+        i'm sure distributing it is just one extra line of code in terms of math but i suck so i'll figure it out when i finish processes
+        */
         if(remainderDistribution>0){
             actualChunkSize= actualChunkSize+remainderDistribution;
             remainderDistribution =0;
         }
 
-        //working:
+        //im doing the naive thing where if i==0 the start position is 0 and then we just add the size of each chunk to get the next starting position
 
         if(i==0){
             startIndex =0 ;
