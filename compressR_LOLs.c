@@ -48,7 +48,7 @@ if(numWorkers>fileSize){
   exit(1);
 }
 
-//the inputs are acceptanble, exec() the worker file
+//the inputs are acceptanble, exec() the worker file 
 
 char* parameters[] = {"./compressR_worker_LOLs", argv[1], argv[2], NULL, NULL};
 execvp(parameters[0], parameters);
