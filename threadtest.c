@@ -174,20 +174,26 @@ int main(int argc, char *argv[])
     {
         int actualChunkSize = chunkSize;
 
-        if (remainderDistribution > 0) {
+        /*if(remainderDistribution > 0) {
             actualChunkSize++;
             remainderDistribution--;
+        }*/
+
+        if(remainderDistribution>0){
+            actualChunkSize= actualChunkSize+remainderDistribution;
+            remainderDistribution =0;
         }
 
-        //hey gurll this is where it's a little weird
-        //its accounting for the next start position when there are remainders
-        //since we have that we are adding the remainder to each file until remainder ==0
+        //working:
 
-        //im doing the naive thing where if i==0 the start position is 0 and then we just add the size of each chunk to get the next starting position
-        //im fixing the math now
         if(i==0){
             startIndex =0 ;
-        }else {
+        }
+        else if(i==1){
+            startIndex = startIndex + actualChunkSize + (fileSize%numWorkers);
+        }
+
+        else {
             startIndex= startIndex + actualChunkSize;
         }
 
