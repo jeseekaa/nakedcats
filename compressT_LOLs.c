@@ -9,6 +9,10 @@ Assignment02 Threads and Processes */
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+/*read in arguments in the form of:
+compressT_LOLS(<file to compress>, <number of parts>)
+compressR_LOLS(<file to compress>, <number of parts>)
+*/
 
 //compression function, serves as a thread, that takes in the beginning and end of when it should compress w/ variables 
 //outputs result into new file with a propended # if >1 file created 
@@ -47,24 +51,38 @@ int processEndOfCharSequence(char *buffer, int buffer_i, int count, char curr) {
 }
 
 char *compressString(char *s) {
-	printf("compressing: %s\n", s);
-    char *buffer = (char *) malloc((strlen(s) + 1) * sizeof(char));
+    printf("compressing: %s\n", s);
+    char* buffer = (char *) malloc((strlen(s) + 1) * sizeof(char));
     int buffer_i = 0;
 
     int count = 0;
     char curr = *s;
 
     int i;
-    for (i = 0; i < strlen(s); i++) {
-        if (curr == s[i]) {
-            count++;
-        } else {
-            buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
+    for (i = 0; i <= strlen(s); i++) {
+        if(isalpha(curr) || isalpha(s[i])){
+            if (curr == s[i]) {
+                count++;
+            } else if (isspace(curr) ||isspace(s[i])){
+                curr=s[i];
+                continue;
+            }
+            else {
+                buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
 
-            count = 1;
-            curr = s[i];
+                count = 1;
+                curr = s[i];
+            }
         }
-    }
+        
+       else {
+            if(isdigit(s[i])){
+                printf("Warning: non-alphabetical detected: %c\n", s[i]);
+            }
+            curr=s[i]; 
+        }
+
+    } //end of for loop, parsing input string
     buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
 
     // null terminate buffer
@@ -80,7 +98,7 @@ char *compressString(char *s) {
 }
 
 
-void *compressFileChunk(void *arg)
+void* compressFileChunk(void *arg)
 {
     PreProcessPayload *payload = (PreProcessPayload *) arg;
 
@@ -92,32 +110,33 @@ void *compressFileChunk(void *arg)
     char *buffer = (char *) malloc(payload->processingBlockSize * sizeof(char));
     int i;
     for (i = 0; i < payload->processingBlockSize && !feof(fp); i++) {
-    	int c = fgetc(fp);
+        int c = fgetc(fp);
 
-    	if (c == EOF) {
-    		break;
-    	}
+        if (c == EOF) {
+            break;
+        }
 
-    	buffer[i] = c;
+        buffer[i] = c;
     }
     printf("buffer: %s\n", buffer);
 
     // needs a better memory allocation in case an insanely big partition number is provided
-	//char *outfileName = (char *) malloc(strlen(payload->fileName) + 6);
+    char *outfileName = (char *) malloc(strlen(payload->fileName) + 6);
     char *testing = payload->fileName;
     int length = strlen(testing)-4;
-    //char *fileNameToken = (char *) malloc(length);
+    char *fileNameToken = (char *) malloc(length);
     char outfileNameBuffer[length+100];
     //pls dont make many threads ty u_u
 
 
     int cutOffIndex = strlen(payload->fileName) - 4;
     payload->fileName[cutOffIndex] = '\0';
+    //sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
 
     if(payload -> partitionNumber == -1) {
-    	sprintf(outfileNameBuffer, "%s_LOLS.txt", payload->fileName);
+        sprintf(outfileNameBuffer, "%s_LOLS.txt", payload->fileName);
     } else {
-    	sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
+        sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
     }
     printf("text file name: %s, length: %d, new file name : %s\n", testing, length, outfileNameBuffer);
 
@@ -134,7 +153,7 @@ void *compressFileChunk(void *arg)
 
 int main(int argc, char *argv[])
 {
-    char *fileName = argv[1];
+    char* fileName = argv[1];
     int numWorkers = atoi(argv[2]);
 
     pthread_t *tid = malloc(sizeof(pthread_t*) * numWorkers);
@@ -148,43 +167,61 @@ int main(int argc, char *argv[])
     /*chunk size logic...
     merrrh
     */
-    if(argc != 3){
-    	printf("wrong number of arguments\n");
-    	return 1;
-    }
+
 
     if (stat(fileName, &st) == 0) {
-    	fileSize = st.st_size;
-    	printf("this is the length: %d", fileSize);
+        fileSize = st.st_size;
+        printf("this is the length: %d", fileSize);
     } else {
-    	printf("file opening error\n");
-    	return -1;
+        printf("file opening error\n");
+        return -1;
     }
 
-    if(fileSize < numWorkers) {
-    	printf("number of files wanted exceeds length, try smaller number\n");
-    	return 1;
-    }
-
+   
     int chunkSize = fileSize / numWorkers;
     int remainderDistribution = fileSize % numWorkers;
     printf("chunk size: %d\n", chunkSize);
 
-    while(i < numWorkers) {
-    	int actualChunkSize = chunkSize;
-    	if (remainderDistribution > 0) {
-    		actualChunkSize++;
-    		remainderDistribution--;
-    	}
+    int startIndex=0;
 
-    	int partitionNumber;
-    	if (numWorkers == 1) {
-    		partitionNumber = -1;
-    	} else {
-    		partitionNumber = i;
-    	}
+    while(i < numWorkers)
+    {
+        int actualChunkSize = chunkSize;
 
-        PreProcessPayload *payload = createPreProcessPayload(fileName, i*chunkSize, actualChunkSize, partitionNumber);
+        /*if(remainderDistribution > 0) {
+            actualChunkSize++;
+            remainderDistribution--;
+        }*/
+	    
+	/*I suck so i just appended extra bytes to the first thread/file
+	if i have time after processes i can try to distribute */
+        if(remainderDistribution>0){
+            actualChunkSize= actualChunkSize+remainderDistribution;
+            remainderDistribution =0;
+        }
+
+	//naive way of calculating the start position of each thread.
+        if(i==0){
+            startIndex =0 ;
+        }
+        else if(i==1){
+            startIndex = startIndex + actualChunkSize + (fileSize%numWorkers);
+        }
+
+        else {
+            startIndex= startIndex + actualChunkSize;
+        }
+
+        int partitionNumber;
+        if (numWorkers == 1){
+            partitionNumber = -1;
+        } else {
+            partitionNumber = i;
+        }
+
+        
+
+        PreProcessPayload *payload = createPreProcessPayload(fileName, startIndex, actualChunkSize, partitionNumber);
     
 
         err = pthread_create(&(tid[i]), NULL, &compressFileChunk, (void *) payload);
