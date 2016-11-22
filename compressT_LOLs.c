@@ -148,7 +148,10 @@ int main(int argc, char *argv[])
     /*chunk size logic...
     merrrh
     */
-
+    if(argc != 3){
+    	printf("wrong number of arguments\n");
+    	return 1;
+    }
 
     if (stat(fileName, &st) == 0) {
     	fileSize = st.st_size;
@@ -156,6 +159,11 @@ int main(int argc, char *argv[])
     } else {
     	printf("file opening error\n");
     	return -1;
+    }
+
+    if(fileSize < numWorkers) {
+    	printf("number of files wanted exceeds length, try smaller number\n");
+    	return 1;
     }
 
     int chunkSize = fileSize / numWorkers;
