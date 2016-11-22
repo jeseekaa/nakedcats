@@ -63,7 +63,7 @@ char *compressString(char *s) {
         if(isalpha(curr) || isalpha(s[i])){
             if (curr == s[i]) {
                 count++;
-            } else if (isspace(curr) ||isspace(s[i])){
+            } else if (isspace(curr) ||isspace(s[i])){ //i think something here is not one correctly
                 curr=s[i];
                 continue;
             }
