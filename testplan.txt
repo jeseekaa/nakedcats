@@ -1,7 +1,8 @@
 Testing Parameters
 
-
+-------------------------------
 Compression Algorithm Testing
+-------------------------------
 Check if doesn't compress a, aa
 Input: abbccc
 Expected Output: abb3c
@@ -17,7 +18,9 @@ Input: a aa
 Expected Output: 3a
 Output:
 
+-------------------------------
 Multi file testing
+-------------------------------
 Check if (string length % files to be output != 0) works
 Input: aaabb, 3
 Expected Output: 3a, b, b
@@ -27,3 +30,12 @@ Check if breaking up same character into different files works
 Input: aaaa, 2
 Expected output: aa, aa
 Output:
+
+-------------------------------
+Input Testing
+-------------------------------
+Check for more files than length of string
+test.txt: aa
+Input: test.txt 10
+Expected Output: error
+Output: error

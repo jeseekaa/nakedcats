@@ -16,6 +16,8 @@ Output is in the form of .txt files.
 
 Program will exit if input file already has compressed files in directory (it will not compress test.txt if test_LOLS.txt exists).
 
+Program will exit if number of files called for is greater than the length of the string. (Ie, string length = 4, user calls for 6 files).
+
 Threaded Implementation
 compressT_LOLs.c
 
