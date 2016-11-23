@@ -1,3 +1,5 @@
+Christine Do, Jessica Guo
+
 Testing Parameters
 
 -------------------------------
@@ -6,30 +8,65 @@ Compression Algorithm Testing
 Check if doesn't compress a, aa
 Input: abbccc
 Expected Output: abb3c
-Output: 
+Output: abb3c
 
 Check if digits print out a warning in a string
 Input: 2aaa
 Expected Output: 3a
-Output:
+Output: Warning: non-alphabetical detected: 2
+compressed:3a
+
+Check if digits are skipped and compression continues
+Input:4kkk4kk6kk7
+Expected Output: 7k
+Output:7k
 
 Check if whitespace is ignored:
 Input: a aa
 Expected Output: 3a
-Output:
+Output: 3a
 
--------------------------------
-Multi file testing
--------------------------------
+Check if execessive whitespace is ignored and file size > 100:
+Input:                                  sfhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+
+                                  ttt
+                                  yy
+Expected Output:sf53h3tyy
+Output:sf53h3tyy
+
+
+Check if other symbols are ignored:
+Input:aaa,.;b!b!
+Expected Output:3abb
+Output:3abb
+
+Check number only inputs:
+Input: 444
+Expected Output: warning messages, empty compressed file
+Output:Warning: non-alphabetical detected: 4
+Warning: non-alphabetical detected: 4
+Warning: non-alphabetical detected: 4
+compressed:
+
+-------------------------------------------------------
+Multi file testing (ran with both processes and threads)
+-------------------------------------------------------
 Check if (string length % files to be output != 0) works
 Input: aaabb, 3
 Expected Output: 3a, b, b
-Output:
+Output: b, b, 3a
 
 Check if breaking up same character into different files works
 Input: aaaa, 2
 Expected output: aa, aa
-Output:
+Output: aa, aa
+
+100 threads/processes:
+(NOTE: copying and pasting the actual test case here would take up a lot of space and would make it difficult to read the rest of the document and has thus been omitted. Nonetheless, it was tested for.)
+Input: test.txt, 100
+Expected output: 100 txt files
+Output: 100 txt files
+
 
 -------------------------------
 Input Testing
@@ -37,5 +74,12 @@ Input Testing
 Check for more files than length of string
 test.txt: aa
 Input: test.txt 10
-Expected Output: error
-Output: error
+Expected Output: error message
+Output: error message
+
+Check for files that already went through compression
+in dir: test.txt test_LOLS.txt
+Input: test.txt 1
+Expected Output: error message
+Output: file already compressed, try new file
+
