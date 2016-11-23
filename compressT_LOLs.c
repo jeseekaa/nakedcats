@@ -125,7 +125,6 @@ void* compressFileChunk(void *arg)
     char *outfileName = (char *) malloc(strlen(payload->fileName) + 6);
     char *testing = payload->fileName;
     int length = strlen(testing)-4;
-    char *fileNameToken = (char *) malloc(length);
     char outfileNameBuffer[length+100];
     //pls dont make many threads ty u_u
 
@@ -155,6 +154,7 @@ void* compressFileChunk(void *arg)
 int main(int argc, char *argv[])
 {
     char* fileName = argv[1];
+    char fileNameToken[100];
     int numWorkers = atoi(argv[2]);
     char existenceCheck[100];
     char existenceCheck0[100];
@@ -179,14 +179,22 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    sprintf(existenceCheck, "%s_LOLS.txt", fileName);
-    sprintf(existenceCheck0, "%s_LOLS0.txt",fileName);
+    strcpy(fileNameToken, fileName);
 
-    if(access(existenceCheck0, F_OK)!= -1 || access(existenceCheck, F_OK != -1)) {
+    int cutOffIndex1 = strlen(fileNameToken) - 4;
+    fileNameToken[cutOffIndex1] = '\0';
+
+    sprintf(existenceCheck, "%s_LOLS.txt", fileNameToken);
+
+    sprintf(existenceCheck0, "%s_LOLS0.txt",fileNameToken);
+
+    printf("%s %s testing fo these \n", existenceCheck, existenceCheck0);
+
+
+    if(access(existenceCheck, F_OK) != -1 || access(existenceCheck0, F_OK) != -1) {
         printf("file already compressed, try new file\n");
         return -1;
-    } 
-
+    }
    
     int chunkSize = fileSize / numWorkers;
     int remainderDistribution = fileSize % numWorkers;
