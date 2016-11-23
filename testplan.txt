@@ -1,0 +1,29 @@
+Testing Parameters
+
+
+Compression Algorithm Testing
+Check if doesn't compress a, aa
+Input: abbccc
+Expected Output: abb3c
+Output: 
+
+Check if digits print out a warning in a string
+Input: 2aaa
+Expected Output: 3a
+Output:
+
+Check if whitespace is ignored:
+Input: a aa
+Expected Output: 3a
+Output:
+
+Multi file testing
+Check if (string length % files to be output != 0) works
+Input: aaabb, 3
+Expected Output: 3a, b, b
+Output:
+
+Check if breaking up same character into different files works
+Input: aaaa, 2
+Expected output: aa, aa
+Output:
