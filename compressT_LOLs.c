@@ -61,12 +61,9 @@ char *compressString(char *s) {
 
     int i;
     for (i = 0; i <= strlen(s); i++) {
-        if(isalpha(curr) || isalpha(s[i])){
+        if(isalpha(curr)){
             if (curr == s[i]) {
                 count++;
-            } else if (isspace(curr) ||isspace(s[i])){ //i think something here is not one correctly
-                curr=s[i];
-                continue;
             }
             else {
                 buffer_i = processEndOfCharSequence(buffer, buffer_i, count, curr);
@@ -75,12 +72,16 @@ char *compressString(char *s) {
                 curr = s[i];
             }
         }
+      else if (isspace(curr)){
+               curr=s[i];
+         }
         
-       else {
-            if(isdigit(s[i])){
-                printf("Warning: non-alphabetical detected: %c\n", s[i]);
+      else {
+            if(isdigit(curr)){
+                printf("Warning: non-alphabetical detected: %c\n", curr);
             }
-            curr=s[i]; 
+
+            curr = s[i]; 
         }
 
     } //end of for loop, parsing input string
