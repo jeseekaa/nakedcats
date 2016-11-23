@@ -52,7 +52,7 @@ int processEndOfCharSequence(char *buffer, int buffer_i, int count, char curr) {
 }
 
 char *compressString(char *s) {
-    printf("compressing: %s\n", s);
+    //printf("compressing: %s\n", s);
     char* buffer = (char *) malloc((strlen(s) + 1) * sizeof(char));
     int buffer_i = 0;
 
@@ -106,7 +106,7 @@ char *compressString(char *s) {
     strcpy(return_str, buffer);
     free(buffer);
 
-    printf("compressed: %s\n", return_str);
+    //printf("compressed: %s\n", return_str);
     return return_str;
 }
 
@@ -130,27 +130,24 @@ void* compressFileChunk(void *arg)
 
         buffer[i] = c;
     }
-    printf("buffer: %s\n", buffer);
+    //printf("buffer: %s\n", buffer);
 
     // needs a better memory allocation in case an insanely big partition number is provided
-    char *outfileName = (char *) malloc(strlen(payload->fileName) + 6);
     char *testing = payload->fileName;
     int length = strlen(testing)-4;
-    char *fileNameToken = (char *) malloc(length);
     char outfileNameBuffer[length+100];
     //pls dont make many threads ty u_u
 
 
     int cutOffIndex = strlen(payload->fileName) - 4;
     payload->fileName[cutOffIndex] = '\0';
-    //sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
 
     if(payload -> partitionNumber == -1) {
         sprintf(outfileNameBuffer, "%s_LOLS.txt", payload->fileName);
     } else {
         sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
     }
-    printf("text file name: %s, length: %d, new file name : %s\n", testing, length, outfileNameBuffer);
+    printf("new file created: %s\n", outfileNameBuffer);
 
     FILE *outfile;
     outfile = fopen(outfileNameBuffer, "w");
@@ -201,7 +198,7 @@ int main(int argc, char *argv[])
 
     sprintf(existenceCheck0, "%s_LOLS0.txt",fileNameToken);
 
-    printf("%s %s testing fo these \n", existenceCheck, existenceCheck0);
+    //printf("%s %s testing fo these \n", existenceCheck, existenceCheck0);
 
 
     if(access(existenceCheck, F_OK) != -1 || access(existenceCheck0, F_OK) != -1) {
@@ -211,7 +208,7 @@ int main(int argc, char *argv[])
    
     int chunkSize = fileSize / numWorkers;
     int remainderDistribution = fileSize % numWorkers;
-    printf("chunk size: %d\n", chunkSize);
+    //printf("chunk size: %d\n", chunkSize);
 
     int startIndex=0;
 
@@ -219,13 +216,7 @@ int main(int argc, char *argv[])
     {
         int actualChunkSize = chunkSize;
 
-        /*if(remainderDistribution > 0) {
-            actualChunkSize++;
-            remainderDistribution--;
-        }*/
-	    
-	/*I suck so i just appended extra bytes to the first thread/file
-	if i have time after processes i can try to distribute */
+
         if(remainderDistribution>0){
             actualChunkSize= actualChunkSize+remainderDistribution;
             remainderDistribution =0;
@@ -259,7 +250,7 @@ int main(int argc, char *argv[])
         if (err != 0)
             printf("\ncan't create thread :[%s]", strerror(err));
         else
-            printf("\n Thread created successfully\n");
+            //printf("\n Thread created successfully\n");
 
         i++;
     }

@@ -8,6 +8,7 @@ Assignment02 Threads and Processes */
 #include <stdlib.h>
 #include <unistd.h> //for fork()
 #include <sys/stat.h>
+#include <ctype.h>
 
 //worker : parent calls fork() then exec() this process
 
@@ -44,7 +45,7 @@ int processEndOfCharSequence(char *buffer, int buffer_i, int count, char curr) {
 }
 
 char *compressString(char *s) {
-    printf("compressing: %s\n", s);
+    //printf("compressing: %s\n", s);
     char* buffer = (char *) malloc((strlen(s) + 1) * sizeof(char));
     int buffer_i = 0;
 
@@ -98,7 +99,7 @@ char *compressString(char *s) {
     strcpy(return_str, buffer);
     free(buffer);
 
-    printf("compressed: %s\n", return_str);
+    //printf("compressed: %s\n", return_str);
     return return_str;
 }
 
@@ -143,7 +144,7 @@ void* compressFileChunk(void *arg)
     } else {
         sprintf(outfileNameBuffer, "%s_LOLS%d.txt", payload->fileName, payload->partitionNumber);
     }
-    printf("text file name: %s, length: %d, new file name : %s\n", testing, length, outfileNameBuffer);
+    printf("new file created : %s\n", outfileNameBuffer);
 
     FILE *outfile;
     outfile = fopen(outfileNameBuffer, "w");
@@ -164,7 +165,7 @@ if(argc != 3) {
 		exit(1);
 	}
 
-printf("Hi, we are in the worker code now!!\n");
+//printf("Hi, we are in the worker code now!!\n");
 
 char* fileName = argv[1];
 int numWorkers = atoi(argv[2]);
@@ -195,13 +196,13 @@ if(numWorkers>fileSize){
 int chunkSize = fileSize/numWorkers;
 int remainderDistribution = fileSize % numWorkers;
 
-printf("chunk size: %d\n", chunkSize);
+//printf("chunk size: %d\n", chunkSize);
 
 
 
 //start the forking 
 pid_t myid = getpid();
-printf("Initial PID (in the worker file): %d\n", myid);
+//printf("Initial PID (in the worker file): %d\n", myid);
 
 int startIndex =0;
 
@@ -243,7 +244,7 @@ for(i=0; i<numWorkers; i++){
 		exit(1);
 	}
 	else if(pids[i]==0){
-		printf("in the child process #%d\n", i);
+		//printf("in the child process #%d\n", i);
 		compressFileChunk(payload);
 		exit(0);
 	}
@@ -255,7 +256,7 @@ pid_t pid;
 //waiting for each process to end
 while(numWorkers>0){
 	pid=wait(&status);
-	printf("child wiht PID %ld exited with status 0x%x.\n", (long)pid, status);
+	//printf("child wiht PID %ld exited with status 0x%x.\n", (long)pid, status);
 	numWorkers--;
 }
 
