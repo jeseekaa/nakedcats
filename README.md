@@ -2,16 +2,17 @@
 
 I maked the submission files that are required but yeah
 
+Compression Algorithm:
+
+If the number of files requested does not evenly divide into the length of the string, the remaining leftover length is added to the first file. For example, a string of length 11 divided into three files would result in the strings to be compressed into 5 3 3.
+Numerical characters result in a warning message printed out.
+Whitespace is skipped (by Professor Francisco's spec).
+Output is in the form of .txt files.
+
+Threaded Implementation
 compressT_LOLs.c
 
-breaks up the string to be compressed by taking in the user input, then distributing the remaining length n to the first n files
-ie, string length 5, user input 2 files -> 5%2 = 1, string length compress is 3, 2
+To call the threaded implementation of LOLS, it is assumed that the user is working in terminal. Compile compressT_LOLS.c.
+Input format should be filename, # of files wanted. 
+Ex: ./a.out fileToBeCompressed.txt 3
 
-didn't add checking for weird characters yet, idk how to handle it. will scour piazza later
-
-some simple test cases:
-uneven string length distribution (length = 5, 2 files, etc)
-when only wants 1 file output - > makes file with LOLs and no number afterwards
-
-need to do:
-spaces/non alpahabets for compression algorithm part 
