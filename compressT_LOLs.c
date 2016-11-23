@@ -126,6 +126,7 @@ void* compressFileChunk(void *arg)
     char *outfileName = (char *) malloc(strlen(payload->fileName) + 6);
     char *testing = payload->fileName;
     int length = strlen(testing)-4;
+    char *fileNameToken = (char *) malloc(length);
     char outfileNameBuffer[length+100];
     //pls dont make many threads ty u_u
 
@@ -151,6 +152,7 @@ void* compressFileChunk(void *arg)
 
     return NULL;
 }
+
 
 int main(int argc, char *argv[])
 {
