@@ -8,7 +8,6 @@ Assignment02 Threads and Processes */
 #include <stdlib.h>
 #include <unistd.h> //for fork()
 #include <sys/stat.h>
-#include <ctype.h> //for isdig, etc
 
 //worker : parent calls fork() then exec() this process
 
@@ -179,28 +178,6 @@ if(numWorkers>fileSize){
   exit(1);
 }
 
-    //exist check
-
-    char fileNameToken[100];
-    char existenceCheck[100];
-    char existenceCheck0[100];
-    strcpy(fileNameToken, fileName);
-
-    int cutOffIndex1 = strlen(fileNameToken) - 4;
-    fileNameToken[cutOffIndex1] = '\0';
-
-    sprintf(existenceCheck, "%s_LOLS.txt", fileNameToken);
-
-    sprintf(existenceCheck0, "%s_LOLS0.txt",fileNameToken);
-
-    printf("%s %s testing fo these \n", existenceCheck, existenceCheck0);
-
-
-    if(access(existenceCheck, F_OK) != -1 || access(existenceCheck0, F_OK) != -1) {
-        printf("file already compressed, try new file\n");
-        return -1;
-    }
-
 
 //size per worker
 
@@ -249,7 +226,7 @@ for(i=0; i<numWorkers; i++){
     }
 
     PreProcessPayload *payload = createPreProcessPayload(fileName, startIndex, actualChunkSize, partitionNumber);
-    
+
 	if((pids[i] =fork())<0){
 		printf("ERROR: fork() failed.\n");
 		exit(1);
