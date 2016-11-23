@@ -65,7 +65,7 @@ Output: aa, aa
 (NOTE: copying and pasting the actual test case here would take up a lot of space and would make it difficult to read the rest of the document and has thus been omitted. Nonetheless, it was tested for.)
 Input: test.txt, 100
 Expected output: 100 txt files
-Output: 100 txt files
+Output: 100 txt files 
 
 
 -------------------------------
