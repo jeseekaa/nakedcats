@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
         i++;
     }
 
-    sleep(5);
+    sleep(1);
 
     return 0;
 }
